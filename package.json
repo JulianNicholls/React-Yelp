@@ -1,0 +1,22 @@
+{
+  "name": "react-yelp",
+  "version": "1.0.0",
+  "description": "A Yelp clone using React",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianNicholls/React-Yelp.git"
+  },
+  "keywords": [
+    "Yelp"
+  ],
+  "author": "Julian Nicholls",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JulianNicholls/React-Yelp/issues"
+  },
+  "homepage": "https://github.com/JulianNicholls/React-Yelp#readme"
+}
