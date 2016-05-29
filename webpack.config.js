@@ -17,7 +17,14 @@ const src     = resolve(root, 'src');
 const modules = resolve(root, 'node_modules');
 const dest    = resolve(root, 'dist');
 
-const dotEnvVars =- dotenv.config();
+var config = getConfig({
+  isDev,
+  in:     join(src, 'app.js'),
+  out:    dest,
+  clearBeforeBuild: true
+});
+
+const dotEnvVars     = dotenv.config();
 const environmentEnv = dotenv.config({
   path: join(root, 'config', `${NODE_ENV}.config.js`),
   silent: true
@@ -29,37 +36,16 @@ const defines =
   Object.keys(envVariables)
     .reduce((memo, key) => {
       const val = JSON.stringify(envVariables[key]);
-      memo[`__${key.toUpperCase}__`] = val;
+      memo[`__${key.toUpperCase()}__`] = val;
 
       return memo;
     }, {
       __NODE_ENV__: JSON.stringify(NODE_ENV)
     });
 
-var config = getConfig({
-  isDev:  isDev,
-  in:     join(src, 'app.js'),
-  out:    dest,
-  clearBeforeBuild: true
-});
-
-config.resolve.root = [src, modules];
-config.resolve.alias = {
-  'css':        join(src, 'styles'),
-  'containers': join(src, 'containers'),
-  'components': join(src, 'components'),
-  'utils':      join(src, 'utils')
-};
-
 config.plugins = [
   new webpack.DefinePlugin(defines)
 ].concat(config.plugins);
-
-config.postcss = [].concat([
-  require('precss')({}),
-  require('autoprefixer')({}),
-  require('cssnano')({})
-]);
 
 const cssModuleNames = `${isDev ? '[path][name]__[local]__' : ''}[hash:base64:$]`;
 
@@ -89,5 +75,38 @@ config.module.loaders.push({
   include: [modules],
   loader: 'style!css'
 });
+
+config.postcss = [].concat([
+  require('precss')({}),
+  require('autoprefixer')({}),
+  require('cssnano')({})
+]);
+
+config.resolve.root = [src, modules];
+config.resolve.alias = {
+  'css':        join(src, 'styles'),
+  'containers': join(src, 'containers'),
+  'components': join(src, 'components'),
+  'utils':      join(src, 'utils')
+};
+
+if(isTest) {
+  config.externals = {
+    'react/lib/ReactContext': true,
+    'react/lib/ExecutionEnvironment': true
+  };
+
+  config.plugins = config.plugins.filter(p => {
+    const name    = p.constructor.toString();
+    const fnName  = name.match(/^function (.*)\((.*\))/);
+
+    const idx = [
+      'DedupePlugin',
+      'UglifyJsPlugin'
+    ].indexOf(fnName[1]);
+
+    return idx < 0;
+  })
+}
 
 module.exports = config;
