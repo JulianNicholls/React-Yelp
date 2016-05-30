@@ -1,19 +1,29 @@
-import React    from 'react';
-import ReactDOM from 'react-dom';
+import React, { PropTypes } from 'react';
+import { Router }           from 'react-router';
 
-import styles   from './styles.module.css';
+// import styles   from './styles.module.css';
 
-const App = React.createClass({
+class App extends React.Component {
+  static propTypes = {
+    routes:  PropTypes.element.isRequired,
+    history: PropTypes.object.isRequired
+  }
+
+  get content() {
+    return (
+      <Router
+        routes={this.props.routes}
+        history={this.props.history}
+      />);
+  }
+
   render() {
     return (
-      <div className={styles.wrapper}>
-        <h1>
-          <i className="fa fa-star"></i>
-          Environment: {__NODE_ENV__}
-        </h1>
+      <div style={{ height: '100%' }}>
+        {this.content}
       </div>
     );
   }
-});
+}
 
 module.exports = App;

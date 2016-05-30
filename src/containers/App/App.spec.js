@@ -9,10 +9,10 @@ describe('App', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(<App />)
+    wrapper = shallow(<App />);
   });
 
-  it('has a single container element', () => {
-    expect(wrapper.find(`.${styles.wrapper}`)).to.have.length(1);
+  it('has a router component', () => {
+    expect(wrapper.find('Router')).to.have.length(1);
   });
 });
